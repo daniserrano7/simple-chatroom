@@ -13,8 +13,16 @@ const getInputMessage = () => {
   return messageInput.value;
 };
 
-const sendMessage = () => {
+const textIsOnlySpaces = (value) => {
+  return /^( )\1*$/.test(value);
+};
+
+const sendMessage = (e) => {
+  e.preventDefault();
+
   const message = getInputMessage();
+  if (!message || textIsOnlySpaces(message)) return;
+
   console.log("Sending message: ", message);
   wsServer.send(JSON.stringify({ message, id }));
   messageInput.value = "";
