@@ -9,13 +9,14 @@ app.use("/", express.static("client"));
 const wsServer = new WebSocketServer({ port: 8080 });
 
 wsServer.on("connection", (socket) => {
-  socket.on("message", (data) => {
-    const message = data.toString();
+  socket.on("message", (serializedData) => {
+    const data = JSON.parse(serializedData.toString());
+    const { id, message } = data;
     console.log("WebSocket message received: ", message);
 
     wsServer.clients.forEach((client) => {
       if (client.readyState === OPEN) {
-        client.send(message);
+        client.send(JSON.stringify({ id, message }));
       }
     });
   });
